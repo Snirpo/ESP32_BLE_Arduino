@@ -192,7 +192,7 @@ void BLEScan::setWindow(uint16_t windowMSecs) {
  * @param [in] scanCompleteCB A function to be called when scanning has completed.
  * @return True if scan started or false if there was an error.
  */
-bool BLEScan::start(uint32_t duration, void (*scanCompleteCB)(BLEScanResults)) {
+bool BLEScan::start(uint32_t duration, std::function<void(BLEScanResults)> scanCompleteCB) {
 	ESP_LOGD(LOG_TAG, ">> start(duration=%d)", duration);
 
 	m_semaphoreScanEnd.take(std::string("start"));
@@ -286,6 +286,10 @@ int BLEScanResults::getCount() {
  */
 BLEAdvertisedDevice BLEScanResults::getDevice(uint32_t i) {
 	return m_vectorAdvertisedDevices.at(i);
+}
+
+std::vector<BLEAdvertisedDevice> BLEScanResults::getDevices() {
+	return m_vectorAdvertisedDevices;
 }
 
 

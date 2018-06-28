@@ -12,6 +12,8 @@
 #include <esp_gap_ble_api.h>
 
 #include <vector>
+#include <functional>
+
 #include "BLEAdvertisedDevice.h"
 #include "BLEClient.h"
 #include "FreeRTOS.h"
@@ -34,6 +36,7 @@ public:
 	void                dump();
 	int                 getCount();
 	BLEAdvertisedDevice getDevice(uint32_t i);
+	std::vector<BLEAdvertisedDevice> getDevices();
 
 private:
 	friend BLEScan;
@@ -53,8 +56,8 @@ public:
 										bool wantDuplicates = false);
 	void           setInterval(uint16_t intervalMSecs);
 	void           setWindow(uint16_t windowMSecs);
-	bool           start(uint32_t duration, void (*scanCompleteCB)(BLEScanResults));
 	BLEScanResults start(uint32_t duration);
+	bool           start(uint32_t duration, std::function<void(BLEScanResults)> scanCompleteCB);
 	void           stop();
 
 private:
@@ -72,7 +75,7 @@ private:
 	FreeRTOS::Semaphore           m_semaphoreScanEnd = FreeRTOS::Semaphore("ScanEnd");
 	BLEScanResults                m_scanResults;
 	bool                          m_wantDuplicates;
-	void                        (*m_scanCompleteCB)(BLEScanResults scanResults);
+	std::function<void(BLEScanResults)> m_scanCompleteCB;
 }; // BLEScan
 
 #endif /* CONFIG_BT_ENABLED */

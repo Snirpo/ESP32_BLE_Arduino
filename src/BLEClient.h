@@ -31,6 +31,7 @@ public:
 	BLEClient();
 	~BLEClient();
 
+	void									   reset();
 	bool                                       connect(BLEAddress address);   // Connect to the remote BLE Server
 	void                                       disconnect();                  // Disconnect from the remote BLE Server
 	BLEAddress                                 getPeerAddress();              // Get the address of the remote BLE Server

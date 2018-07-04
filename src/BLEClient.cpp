@@ -46,12 +46,8 @@ static const char* LOG_TAG = "BLEClient";
 
 BLEClient::BLEClient() {
 	m_pClientCallbacks = nullptr;
-	m_conn_id          = 0;
-	m_gattc_if         = 0;
-	m_haveServices     = false;
-	m_isConnected      = false;  // Initially, we are flagged as not connected.
+	reset();
 } // BLEClient
-
 
 /**
  * @brief Destructor.
@@ -65,6 +61,15 @@ BLEClient::~BLEClient() {
 	m_servicesMap.clear();
 } // ~BLEClient
 
+void BLEClient::reset() {
+	ESP_LOGD(LOG_TAG, ">> reset");
+	m_conn_id          = 0;
+	m_gattc_if         = 0;
+	m_haveServices     = false;
+	m_isConnected      = false;  // Initially, we are flagged as not connected.
+	clearServices();
+	ESP_LOGD(LOG_TAG, "<< reset");
+}
 
 /**
  * @brief Clear any existing services.
@@ -94,7 +99,7 @@ bool BLEClient::connect(BLEAddress address) {
 // and then block on its completion.  When the event has arrived, we will have the handle.
 	m_semaphoreRegEvt.take("connect");
 
-	clearServices(); // Delete any services that may exist.
+	reset(); // Delete any services that may exist.
 
 	esp_err_t errRc = ::esp_ble_gattc_app_register(0);
 	if (errRc != ESP_OK) {
